@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+import tempfile
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -22,21 +23,19 @@ def get_runtime_root() -> Path:
 
 
 def get_data_dir() -> Path:
-    fallback_dir = get_runtime_root() / "data"
-
     if os.name == "nt":
         local_app_data = os.environ.get("LOCALAPPDATA")
         if local_app_data:
             base_dir = Path(local_app_data) / APP_NAME
         else:
-            base_dir = fallback_dir
+            base_dir = Path.home() / "AppData" / "Local" / APP_NAME
     else:
-        base_dir = fallback_dir
+        base_dir = Path.home() / f".{APP_NAME.lower()}"
 
     try:
         return _ensure_directory(base_dir)
     except OSError:
-        return _ensure_directory(fallback_dir)
+        return _ensure_directory(Path(tempfile.gettempdir()) / APP_NAME)
 
 
 def get_logs_dir() -> Path:

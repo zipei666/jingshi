@@ -17,6 +17,7 @@ dist/
 *.local
 config.local.py
 settings.json
+data/
 
 # Logs and temporary files
 *.log
